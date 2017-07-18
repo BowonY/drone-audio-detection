@@ -3,12 +3,12 @@
 https://github.com/NeilYager/LittleSleeper
 
 ## Requirements
-* Python 3.x
+### Python 3.x or Anaconda3
 
-* Python speech features
+### Python speech features
 `pip install python_speech_features`
 
-* Pyaudio
+### Pyaudio
 Install Portaudio
 `brew install portaudio`
 Create/add this:
@@ -20,10 +20,10 @@ library_dirs=/usr/local/Cellar/portaudio/19.6/lib/
 Run this:
 `pip install --allow-external pyaudio --allow-unverified pyaudio pyaudio`
 
-* tornado
+### tornado
 `pip install tornado`
 
-* mongodb
+### mongodb
 `brew install mongodb`
 
 ## How to run
