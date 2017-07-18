@@ -1,0 +1,6 @@
+src/test/*
+src/.ipynb_checkpoints/*
+src/bak/*
+*__pycache__/
+*.swp
+*.DS_Store
