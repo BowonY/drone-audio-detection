@@ -81,8 +81,8 @@ def process_signal(audio_plot, audio_signal, parameters, time_stamps):
     time_current = time.time()
     time_crying = ""
     time_quiet = ""
-    str_crying = "Baby noise for "
-    str_quiet = "Baby quiet for "
+    str_crying = "Drone noise for "
+    str_quiet = "Drone quiet for "
     if len(crying_blocks) == 0:
         time_quiet = str_quiet + format_time_difference(time_stamps[0], time_current)
     else:
