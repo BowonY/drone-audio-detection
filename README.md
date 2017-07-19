@@ -17,6 +17,8 @@ Install Portaudio
 `brew install portaudio`
 Create/add this:
 ``` bash
+cat >> ~/.pydistutils.cfg
+
 [build_ext]
 include_dirs=/usr/local/Cellar/portaudio/19.6/include/
 library_dirs=/usr/local/Cellar/portaudio/19.6/lib/
