@@ -13,9 +13,9 @@ from python_speech_features import delta
 from python_speech_features import logfbank
 from python_speech_features import ssc
 from util.features import d_mfcc
-from util.littlesleeper import process_signal
-from util.littlesleeper import format_time_difference
-from util.littlesleeper import normalize
+from util.uav_detection import process_signal
+from util.uav_detection import format_time_difference
+from util.uav_detection import normalize
 
 
 CHUNK_SIZE = 8192
