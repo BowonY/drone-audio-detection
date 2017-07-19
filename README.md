@@ -9,6 +9,10 @@ https://github.com/NeilYager/LittleSleeper
 `pip install python_speech_features`
 
 ### Pyaudio
+#### Windows
+`pip install pyaudio`
+
+#### OSX
 Install Portaudio
 `brew install portaudio`
 Create/add this:
@@ -23,7 +27,7 @@ Run this:
 ### tornado
 `pip install tornado`
 
-### mongodb
+### mongodb (not necessary now)
 `brew install mongodb`
 
 ## How to run
