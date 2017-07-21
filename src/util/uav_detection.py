@@ -4,6 +4,31 @@ import ctypes
 from scipy import ndimage, interpolate
 from datetime import datetime
 
+def get_plots(audio_signal, current_pos, parameters, SAMPLE_RATE, CHUNK_SIZE):
+    """
+    return audio_signal and audio_plot after normalizing/smoothing
+    audio_plot starts with [0.0, 0.0, ...] so that the latest readings
+    are at the end
+    """
+    # roll the arrays so that the latest readings are at the end
+    buffer_len = audio_signal.shape[0]
+    audio_signal = np.roll(audio_signal, shift=buffer_len-current_pos)
+
+    # normalise volume level
+    audio_signal /= parameters['upper_limit']
+
+    # apply some smoothing
+    sigma = 4 * (SAMPLE_RATE / float(CHUNK_SIZE))
+    audio_signal = ndimage.gaussian_filter1d(audio_signal, sigma=sigma, mode="reflect")
+
+    # get the last hour of data for the plot and re-sample to 1 value per second
+    hour_chunks = int(60 * 60 * (SAMPLE_RATE / float(CHUNK_SIZE)))
+    xs = np.arange(hour_chunks)
+    f = interpolate.interp1d(xs, audio_signal[-hour_chunks:])
+    audio_plot = f(np.linspace(start=0, stop=xs[-1], num=3600))
+
+    return [audio_signal, audio_plot]
+
 def normalize(audio_signal, time_stamps, current_pos, parameters, SAMPLE_RATE, CHUNK_SIZE):
     # roll the arrays so that the latest readings are at the end
     buffer_len = time_stamps.shape[0]

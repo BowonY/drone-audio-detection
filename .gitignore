@@ -1,4 +1,5 @@
 src/.ipynb_checkpoints/*
+notebook/.ipynb_checkpoints/*
 src/bak/*
 src/test/*
 *__pycache__/
