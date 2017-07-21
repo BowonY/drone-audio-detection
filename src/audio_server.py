@@ -13,9 +13,10 @@ from python_speech_features import delta
 from python_speech_features import logfbank
 from python_speech_features import ssc
 from util.features import d_mfcc
-from util.littlesleeper import process_signal
-from util.littlesleeper import format_time_difference
-from util.littlesleeper import normalize
+from util.uav_detection import process_signal
+from util.uav_detection import format_time_difference
+from util.uav_detection import normalize
+from util.uav_detection import get_plots
 
 
 CHUNK_SIZE = 8192
@@ -39,7 +40,8 @@ def process_audio(shared_audio, shared_time, shared_pos, lock):
 
     # open default audio input stream
     p = pyaudio.PyAudio()
-    stream = p.open(format=AUDIO_FORMAT, channels=1, rate=SAMPLE_RATE, input=True, frames_per_buffer=CHUNK_SIZE)
+    stream = p.open(format=AUDIO_FORMAT, channels=1, rate=SAMPLE_RATE, 
+            input=True, frames_per_buffer=CHUNK_SIZE)
     wf = wave.open(WAVE_FILENAME, 'wb')
     wf.setnchannels(1)
     wf.setsampwidth(p.get_sample_size(AUDIO_FORMAT))
@@ -66,6 +68,7 @@ def process_audio(shared_audio, shared_time, shared_pos, lock):
 
             # release lock
             lock.release()
+
     except KeyboardInterrupt:
         stream.stop_stream()
         stream.close()
@@ -76,7 +79,7 @@ def process_audio(shared_audio, shared_time, shared_pos, lock):
     stream.close()
     p.terminate()
 
-def process_requests(shared_audio, shared_time, shared_pos, lock):
+def process_requests_legacy(shared_audio, shared_time, shared_pos, lock):
     """
     Handle requests from the web server. First get the latest data, and
      then analyse it to find the current noise state
@@ -129,22 +132,83 @@ def process_requests(shared_audio, shared_time, shared_pos, lock):
         conn.send(results)
         conn.close()
 
+def process_requests(shared_audio, shared_time, shared_pos, lock):
+    """
+    Handle requests from the web server. First get the latest data, and
+     then analyse it to find the current noise state
+    :param shared_audio:
+    :param shared_time:
+    :param shared_pos:
+    :param lock:
+    :return:
+    """
+
+    listener = Listener(AUDIO_SERVER_ADDRESS)
+    while True:
+        conn = listener.accept()
+
+        # get some parameters from the client
+        parameters = conn.recv()
+
+        # acquire lock
+        lock.acquire()
+
+        # convert to numpy arrays and get a copy of the data
+        time_stamps = np.frombuffer(shared_time, np.float64).copy()
+        audio_signal = np.frombuffer(shared_audio, np.int16).astype(np.float32)
+        current_pos = shared_pos.value
+
+        # release lock
+        lock.release()
+
+        """
+        Current version
+        1. get normalized audio_signal and get audio_plot
+        2. get predictions with pre-trained model (0 or 1)
+        3. calculate percentage of 1 in prediction array
+        4. send audio_plot, and percentage
+        results = {'audio_plot': audio_plot,
+                   'percent_detected': percent_detected
+                   }
+        """
+        # 1. get normalized audio_signal, audio_plots
+        audio_signal, audio_plot = get_plots(audio_signal, current_pos, parameters, SAMPLE_RATE, CHUNK_SIZE)
+
+        # 2. get predictions array
+        y_pred = predict_audio(audio_signal)
+
+        # 3. calculate percentage of 'one's
+        percent_detected = judge_uav(y_pred)
+
+        # 4. send audio_plot, percent_detected
+        results = {'audio_plot': audio_plot,
+                   'percent_detected': percent_detected}
+
+        conn.send(results)
+        conn.close()
+
+def judge_uav(y_pred):
+    """
+    return the percentage of 'one' from prediction array
+    """
+    if len(y_pred) <= 0:
+        return 0
+    mask = y_pred > 0
+    one_cnt = len(y_pred[mask])
+    percent = one_cnt / len(y_pred) *100
+    return percent
+
 def predict_audio(sig, feat='mfcc', model='svm'):
     """
     calculate feature from signal
-    retrieve model from dumps dictionary
-    predict
+    retrieve model from dumps (pre-trained model dictionary)
+    return predictions
     """
-    feature = featfunc[feat](sig)
+    feature = feature_func[feat](sig)
     dump = dumps[model][feat]
-    clf = joblib.loads(dump)
+    clf = joblib.load(dump)
     y_pred = clf.predict(feature)
     return y_pred
-
-# TODO: make a logic to detect uav sound from prediction
-def detect_uav(y_pred):
-    results = None
-    return results
 
 def init_server():
     # figure out how big the buffer needs to be to contain BUFFER_HOURS of audio
