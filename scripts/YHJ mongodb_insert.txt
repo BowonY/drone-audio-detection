@@ -1,8 +1,8 @@
-apt-get install mongo
-#mongodb¼³Ä¡
+ï»¿apt-get install mongo
+#mongodbì„¤ì¹˜
 
 pip3 install pymongo
-#python version mongodb¼³Ä¡
+#python version mongodbì„¤ì¹˜
 
 python3
 #python3 open
@@ -10,13 +10,13 @@ python3
 import pymongo
 
 connection = pymongo.MongoClient("localhost",27017)
-#pymongoÀÇ port¿¡ connection
+#pymongoì˜ portì— connection
 
 db = connection.UAVdetection
-#UAVdetecionÀÌ¶ó´Â Database¸¦ »ı¼ºÇÔ.
+#UAVdetecionì´ë¼ëŠ” Databaseë¥¼ ìƒì„±í•¨.
 
 collection = db.detection
-#Database¿¡ collectionÀ» detectionÀÌ¶ó´Â ÀÌ¸§À¸·Î ÁöÁ¤ÇÔ.
+#Databaseì— collectionì„ detectionì´ë¼ëŠ” ì´ë¦„ìœ¼ë¡œ ì§€ì •í•¨.
 
 collection.insert({"data":0})
-#µ¥ÀÌÅÍ °¢°¢À» key°ª(data)°ú value(0)Çü½ÄÀ¸·Î db¿¡ insertÇÔ.
+#ë°ì´í„° ê°ê°ì„ keyê°’(data)ê³¼ value(0)í˜•ì‹ìœ¼ë¡œ dbì— insertí•¨.
