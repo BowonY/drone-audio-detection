@@ -52,7 +52,6 @@ def broadcast_mic_data():
     conn = Client(AUDIO_SERVER_ADDRESS)
     conn.send(parameters)
     results = conn.recv()
-    print(results)
     conn.close()
 
     # send results to all clients
@@ -60,7 +59,7 @@ def broadcast_mic_data():
     results['date_current'] = '{dt:%A} {dt:%B} {dt.day}, {dt.year}'.format(dt=now)
     results['time_current'] = now.strftime("%I:%M:%S %p").lstrip('0')
     results['audio_plot'] = results['audio_plot'].tolist()
-    print(clients)
+    print(results)
     for c in clients:
         c.write_message(results)
 
@@ -80,7 +79,7 @@ def main():
     print("Listening on port:", WEB_SERVER_ADDRESS[1])
  
     main_loop = tornado.ioloop.IOLoop.instance()
-    scheduler = tornado.ioloop.PeriodicCallback(broadcast_mic_data, 500, io_loop=main_loop)
+    scheduler = tornado.ioloop.PeriodicCallback(broadcast_mic_data, 2000, io_loop=main_loop)
     scheduler.start()
     main_loop.start()
  
