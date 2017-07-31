@@ -59,9 +59,10 @@ def broadcast_mic_data():
     results['date_current'] = '{dt:%A} {dt:%B} {dt.day}, {dt.year}'.format(dt=now)
     results['time_current'] = now.strftime("%I:%M:%S %p").lstrip('0')
     results['audio_plot'] = results['audio_plot'].tolist()
-    print(results)
+    # print(results)
     for c in clients:
         c.write_message(results)
+        # pass
 
 
 def main():
@@ -84,5 +85,6 @@ def main():
     main_loop.start()
  
 if __name__ == "__main__":
+    print("web server start")
     main()
 
