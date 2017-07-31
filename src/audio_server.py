@@ -211,6 +211,7 @@ def predict_audio(sig, feat='mfcc', model='svm'):
     return y_pred
 
 def init_server():
+    print("audio server start")
     # figure out how big the buffer needs to be to contain BUFFER_HOURS of audio
     buffer_len = int(BUFFER_HOURS * 60 * 60 * (SAMPLE_RATE / float(CHUNK_SIZE)))
 
