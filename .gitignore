@@ -5,3 +5,4 @@ src/test/*
 *__pycache__/
 *.swp
 *.DS_Store
+.idea/
