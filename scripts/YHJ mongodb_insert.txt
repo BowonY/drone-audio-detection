@@ -1,0 +1,22 @@
+﻿apt-get install mongo
+#mongodb설치
+
+pip3 install pymongo
+#python version mongodb설치
+
+python3
+#python3 open
+
+import pymongo
+
+connection = pymongo.MongoClient("localhost",27017)
+#pymongo의 port에 connection
+
+db = connection.UAVdetection
+#UAVdetecion이라는 Database를 생성함.
+
+collection = db.detection
+#Database에 collection을 detection이라는 이름으로 지정함.
+
+collection.insert({"data":0})
+#데이터 각각을 key값(data)과 value(0)형식으로 db에 insert함.
