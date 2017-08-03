@@ -1,53 +1,60 @@
 $(function() {
-    //add select tag handler
-    $("#feature").change(function() {
-        // alert("feature tag changed");
-        var selected_feature = $("#feature").val();
-        alert("selected feature: " + selected_feature);
+    var waveChart = new CanvasJS.Chart("waveContainer", {
+        title: {
+            text: "Sound waveform"
+        },
+        data: [{
+            type: "line",
+            dataPoints: []
+        }]
     });
-
-    //screen
-    var zeros = []
-    for (var i = 0; i < 3600; i++) { zeros.push([i, 0.0]); }
-    var plot = $.plot("#plot", [ zeros ], {
-        series: {
-            color: "#000",
-            shadowSize: 0,    // Drawing is faster without shadows
-            lines: {
-                lineWidth: 2
-            }
+    waveChart.render();
+    var predictChart = new CanvasJS.Chart("predictContainer", {
+        title: {
+            text: "Predict"
         },
-        yaxis: {
-            min: 0.0,
-            max: 1.0,
-            show: false
+        data: [{
+            type: "line",
+            dataPoints: []
+        }],
+        axisX: {
+            title: "timestamp"
         },
-        xaxis: {
-            show: false
-        },
-        grid: {
-            borderWidth: 0
+        axisY: {
+            minimum: 0.00,
+            maximum: 100.00,
+            suffix: "%"
         }
     });
+    predictChart.render();
+
+    var updateWaveChart = function(wav) {
+        // console.log("wav")
+        // console.log(wav)
+        for (var i=0; i<wav.length; ++i) {
+            waveChart.options.data[0].dataPoints.push({
+                y: wav[i]
+            });
+        }
+        waveChart.render();
+    }
+    var updatePredictChart = function(newData) {
+        predictChart.options.data[0].dataPoints.push({
+            x: (+ new Date()),  //timestamp
+            y: newData
+        });
+        predictChart.render();
+    }
+
     var socket = new WebSocket("ws://localhost:8090/ws");
     socket.onmessage = function (message) {
-        // update the text display
-        $("#percent_detected").text(JSON.parse(message.data).percent_detected);
-//            $("#time_quiet").text(JSON.parse(message.data).time_quiet);
-//            $("#time_crying").text(JSON.parse(message.data).time_crying);
-        // update the history table
-//            var table = "<tr><th>Drone noise start</th><th>Duration</th></tr>";
-//            $.each(JSON.parse(message.data).crying_blocks, function( index, crying_block ) {
-//               table += "<tr><td>" + crying_block.start_str + "</td><td>" + crying_block.duration + "</td></tr>";
-//            });
-//            $("#history_table").html(table);
-        // update the plot of the volume levels for the past hour
-        var data = JSON.parse(message.data).audio_plot;
-        var vals = [];
-        for (var i = 0; i < data.length; i++) {
-            vals.push([i, data[i]]);
-        }
-        plot.setData([ vals ]);
-        plot.draw();
+        //debug
+        console.log('message')
+        console.log(message)
+        var predict_percent = JSON.parse(message.data).percent_detected;
+        $("#percent_detected").text(predict_percent);
+        var wav = JSON.parse(message.data).wav;
+        updateWaveChart(wav);
+        updatePredictChart(predict_percent);
     };
 });

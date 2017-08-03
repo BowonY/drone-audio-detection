@@ -18,7 +18,7 @@
         </div>
 
         <!-- select feature -->
-        <form class="form-inline">
+<!--         <form class="form-inline">
             <label for="feature">Feature: </label>
             <select class="form-control" id="feature">
                 <option value="mfcc">mfcc</option>
@@ -27,7 +27,7 @@
                 <option value="ssc">ssc</option>
             </select>
         </form>
-        <br>
+        <br> -->
 
         <!-- current status -->
         <div class="jumbotron">
@@ -36,9 +36,11 @@
         </div>
 
         <!-- scrolling volume plot -->
-        <div class="plot-container">
+<!--         <div class="plot-container">
             <div id="plot" class="plot-placeholder"></div>
-        </div>
+        </div> -->
+        <div id="waveContainer" style="height: 300px; width:100%;"></div>
+        <div id="predictContainer" style="height: 300px; width:100%;"></div>
 
         <!-- history -->
         <table class="table table-hover" id="history_table">
@@ -48,6 +50,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script language="javascript" type="text/javascript" src={{ static_url("jquery.flot.js") }}></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script type="text/javascript" src={{ static_url("detect.js") }}></script>
+    </script>
     </body>
 </html>
