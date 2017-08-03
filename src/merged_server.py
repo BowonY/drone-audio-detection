@@ -1,3 +1,9 @@
+#
+# how to use
+# 1. python merged_server.py
+# 2. http://localhost:8090
+#
+
 import os
 from datetime import datetime
 
